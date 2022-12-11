@@ -1,11 +1,9 @@
+require("dotenv").config();
 const application = require("express")();
 const cors = require("cors");
 const mongoose = require("mongoose");
-const db_connecion = require("./models/connection");
-const topicroutes = require("./controllers/topiccontroller");
-const topicmodel = mongoose.model("topicschema");
+mongoose.set("strictQuery", false);
 application.use(cors());
-application.use("/topic", topicroutes);
 const server = require("http").createServer(application);
 const io = require("socket.io")(server, { cors: { origin: "*" } });
 var moment = require("moment");
@@ -17,10 +15,46 @@ application.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-server.listen(PORT,  () => {
-  removeallgroups();
-  console.log("Server is running on port: " + PORT);
-});
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.Mongourl);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+}
+
+connectDB().then(() => {
+  // app.listen(process.env.PORT || 5000, () => {
+  // console.log("app listing on port 3000 if port 5000 is free");
+  // });
+
+  server.listen(PORT,  () => {
+    removeallgroups();
+    console.log("Server is running on port: " + PORT);
+  });
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+const db_connecion = require("./models/connection");
+const topicroutes = require("./controllers/topiccontroller");
+const topicmodel = mongoose.model("topicschema");
+application.use("/topic", topicroutes);
+
+
 
 async function removeallgroups(){
   await topicmodel.find().then( async (response)=>{
