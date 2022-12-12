@@ -145,9 +145,9 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async() => {
     time = moment().format("h:mm:ss a");
-    socket.broadcast.to(socket.groupname).emit("notifyuserleave", {
+   await socket.broadcast.to(socket.groupname).emit("notifyuserleave", {
       msg: `${socket.username} leave group`,
       time: time,
       groupname: socket.groupname,
