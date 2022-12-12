@@ -33,7 +33,7 @@ connectDB().then(() => {
 
   server.listen(PORT,  () => {
     removeallgroups();
-    console.log("Server is running on port: " + PORT);
+    console.log("Server is listeing on port: " + PORT);
   });
 })
 
